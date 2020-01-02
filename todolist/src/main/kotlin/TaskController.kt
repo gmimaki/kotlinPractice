@@ -1,4 +1,9 @@
 package todolist
 
-class TaskController {
+import spark.Route
+
+class TaskController(private val taskRepository: TaskRepository) {
+    fun index(): Route = Route { req, res ->
+        taskRepository.findAll()
+    }
 }
