@@ -28,6 +28,17 @@ class TaskController(private val objectMapper: ObjectMapper,
         req.task ?: throw halt(404)
     }
 
+    fun update(): Route = Route { req, res ->
+        val request: TaskUpdateRequest = objectMapper.readValue(req.bodyAsBytes()) ?: throw halt(400)
+        val task = req.task ?: throw halt(404)
+        val newTask = task.copy(
+            content = request.content ?: task.content,
+            done = request.done ?: task.done
+        )
+        taskRepository.update(newTask)
+        res.status(204)
+    }
+
     fun destroy(): Route = Route { req, res ->
         val task = req.task ?: throw halt(404)
         taskRepository.delete(task)

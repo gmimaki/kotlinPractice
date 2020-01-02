@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import spark.Spark.get
 import spark.Spark.post
 import spark.Spark.path
+import spark.Spark.patch
 import spark.Spark.delete
 
 fun main(args: Array<String>) {
@@ -17,6 +18,7 @@ fun main(args: Array<String>) {
         get("", taskController.index(), jsonTransformer)
         post("", taskController.create(), jsonTransformer)
         get("/:id", taskController.show(), jsonTransformer)
+        patch("/:id", taskController.update(), jsonTransformer)
         delete("/:id", taskController.destroy(), jsonTransformer)
     }
 }
