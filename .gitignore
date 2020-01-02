@@ -1,2 +1,4 @@
 /todolist/build/*
 /todolist/gradle/*
+/todolist/.idea/*
+/todolist/.gradle/*
