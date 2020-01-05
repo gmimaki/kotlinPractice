@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import com.example.todolist.domain.entity.Task
 import com.example.todolist.domain.repository.TaskRepository
+import com.example.todolist.usecase.TaskCreateForm
 
 @Controller
 @RequestMapping("tasks")
@@ -15,5 +16,10 @@ class TaskController(private val taskRepository: TaskRepository) {
         val tasks = taskRepository.findAll()
         model.addAttribute("tasks", tasks)
         return "tasks/index"
+    }
+
+    @GetMapping("new")
+    fun new(form: TaskCreateForm): String {
+        return "tasks/new"
     }
 }
