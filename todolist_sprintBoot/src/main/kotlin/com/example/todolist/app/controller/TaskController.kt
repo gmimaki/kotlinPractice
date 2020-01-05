@@ -2,8 +2,6 @@ package com.example.todolist.app.controller
 
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
 import com.example.todolist.domain.entity.Task
 import com.example.todolist.domain.repository.TaskRepository
 import com.example.todolist.error.NotFoundException
@@ -12,7 +10,10 @@ import com.example.todolist.usecase.TaskUpdateForm
 import com.sun.corba.se.impl.orbutil.ObjectStreamClass_1_3_1
 import org.springframework.validation.BindingResult
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
@@ -49,5 +50,20 @@ class TaskController(private val taskRepository: TaskRepository) {
         form.content = task.content
         form.done = task.done
         return "tasks/edit"
+    }
+
+    @PostMapping("{id}")
+    fun update(@PathVariable("id") id: Long,
+               @Validated form: TaskUpdateForm,
+               bindingResult: BindingResult): String {
+        if (bindingResult.hasErrors())
+            return "tasks/edit"
+
+        print("コレガID")
+        print(id)
+        val task = taskRepository.findById(id) ?: throw NotFoundException()
+        val newTask = task.copy(content = requireNotNull(form.content), done = form.done)
+        taskRepository.update(newTask)
+        return "redirect:/tasks"
     }
 }
