@@ -8,13 +8,10 @@ import com.example.todolist.error.NotFoundException
 import com.example.todolist.usecase.TaskCreateForm
 import com.example.todolist.usecase.TaskUpdateForm
 import com.sun.corba.se.impl.orbutil.ObjectStreamClass_1_3_1
+import org.springframework.http.HttpStatus
 import org.springframework.validation.BindingResult
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
 @Controller
@@ -59,11 +56,13 @@ class TaskController(private val taskRepository: TaskRepository) {
         if (bindingResult.hasErrors())
             return "tasks/edit"
 
-        print("コレガID")
-        print(id)
         val task = taskRepository.findById(id) ?: throw NotFoundException()
         val newTask = task.copy(content = requireNotNull(form.content), done = form.done)
         taskRepository.update(newTask)
         return "redirect:/tasks"
     }
+
+    @ExceptionHandler(NotFoundException::class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    fun handleNotFoundException(): String = "tasks/not_found"
 }
