@@ -6,10 +6,14 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import com.example.todolist.domain.entity.Task
 import com.example.todolist.domain.repository.TaskRepository
+import com.example.todolist.error.NotFoundException
 import com.example.todolist.usecase.TaskCreateForm
+import com.example.todolist.usecase.TaskUpdateForm
+import com.sun.corba.se.impl.orbutil.ObjectStreamClass_1_3_1
 import org.springframework.validation.BindingResult
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
 @Controller
@@ -30,14 +34,20 @@ class TaskController(private val taskRepository: TaskRepository) {
     @PostMapping("")
     fun create(@Validated form: TaskCreateForm,
                bindingResult: BindingResult): String {
-        print(form)
-        print(form.content)
-        print(bindingResult.hasErrors())
         if (bindingResult.hasErrors())
             return "tasks/new"
 
         val content = requireNotNull(form.content)
         taskRepository.create(content)
         return "redirect:/tasks"
+    }
+
+    @GetMapping("{id}/edit")
+    fun edit(@PathVariable("id") id: Long,
+             form: TaskUpdateForm): String {
+        val task = taskRepository.findById(id) ?: throw NotFoundException()
+        form.content = task.content
+        form.done = task.done
+        return "tasks/edit"
     }
 }
