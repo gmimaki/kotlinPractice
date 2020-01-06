@@ -4,7 +4,6 @@ import com.example.todolist.domain.repository.TaskRepository
 import org.springframework.stereotype.Repository
 import com.example.todolist.domain.entity.Task
 
-@Repository
 class InMemoryTaskRepository : TaskRepository {
     private val tasks: MutableList<Task> = mutableListOf()
 
