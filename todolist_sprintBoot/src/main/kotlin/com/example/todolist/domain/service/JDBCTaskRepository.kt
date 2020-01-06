@@ -3,6 +3,7 @@ package com.example.todolist.domain.service
 import com.example.todolist.domain.repository.TaskRepository
 import org.springframework.stereotype.Repository
 import com.example.todolist.domain.entity.Task
+import com.example.todolist.error.NotFoundException
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.JdbcTemplate
 
@@ -14,8 +15,7 @@ class JDBCTaskRepository(private val jdbcTemplate: JdbcTemplate) : TaskRepositor
 
     override fun create(content: String): Task {
         jdbcTemplate.update("INSERT INTO task(content) VALUES(?)", content)
-        /* ?: 0ほんとは良くないはず (mismatchエラーになるためやむなくそうしてるがベストプラクティス確認する */
-        val id = jdbcTemplate.queryForObject("SELECT last_insert_id()", Long::class.java) ?: 0
+        val id = jdbcTemplate.queryForObject("SELECT last_insert_id()", Long::class.java) ?: throw NotFoundException()
         return Task(id, content, false)
     }
 
