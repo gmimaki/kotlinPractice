@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository
 import com.example.todolist.domain.entity.Task
 import com.example.todolist.error.NotFoundException
 import org.springframework.jdbc.core.RowMapper
+import com.example.todolist.extensions.queryForObject
 import org.springframework.jdbc.core.JdbcTemplate
 
 @Repository
@@ -15,7 +16,7 @@ class JDBCTaskRepository(private val jdbcTemplate: JdbcTemplate) : TaskRepositor
 
     override fun create(content: String): Task {
         jdbcTemplate.update("INSERT INTO task(content) VALUES(?)", content)
-        val id = jdbcTemplate.queryForObject("SELECT last_insert_id()", Long::class.java) ?: throw NotFoundException()
+        val id: Long = jdbcTemplate.queryForObject("SELECT last_insert_id()") ?: throw NotFoundException()
         return Task(id, content, false)
     }
 
